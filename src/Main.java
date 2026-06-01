@@ -96,8 +96,44 @@ public class Main {
         return (2.0 * match / (h1.size() + h2.size())) * 100;
     }
 
+    // PHASE 3 - LCS (RECURSION + DP)
 
+    public static int lcs(ArrayList<String> a,
+                          ArrayList<String> b,
+                          int i,
+                          int j,
+                          int[][] dp) {
 
+        if (i == 0 || j == 0)
+            return 0;
+
+        if (dp[i][j] != -1)
+            return dp[i][j];
+
+        if (a.get(i - 1).equals(b.get(j - 1))) {
+
+            return dp[i][j] =
+                    1 + lcs(a, b, i - 1, j - 1, dp);
+        }
+
+        return dp[i][j] = Math.max(
+                lcs(a, b, i - 1, j, dp),
+                lcs(a, b, i, j - 1, dp)
+        );
+    }
+
+    public static double phase3(ArrayList<String> a,
+                                ArrayList<String> b) {
+
+        int[][] dp = new int[a.size() + 1][b.size() + 1];
+
+        for (int[] row : dp)
+            Arrays.fill(row, -1);
+
+        int res = lcs(a, b, a.size(), b.size(), dp);
+
+        return (2.0 * res / (a.size() + b.size())) * 100;
+    }
     // MAIN
     public static void main(String[] args) {
     }
