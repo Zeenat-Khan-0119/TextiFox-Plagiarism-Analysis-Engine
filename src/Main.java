@@ -134,6 +134,62 @@ public class Main {
 
         return (2.0 * res / (a.size() + b.size())) * 100;
     }
+
+    // PHASE 4 - TRIE
+
+    static class Node {
+
+        HashMap<Character, Node> child = new HashMap<>();
+        boolean end = false;
+    }
+
+    static class Trie {
+
+        Node root = new Node();
+
+        void insert(String word) {
+
+            Node cur = root;
+
+            for (char c : word.toCharArray()) {
+
+                cur.child.putIfAbsent(c, new Node());
+                cur = cur.child.get(c);
+            }
+
+            cur.end = true;
+        }
+
+        boolean search(String word) {
+
+            Node cur = root;
+
+            for (char c : word.toCharArray()) {
+
+                if (!cur.child.containsKey(c))
+                    return false;
+
+                cur = cur.child.get(c);
+            }
+
+            return cur.end;
+        }
+
+        int matchCount(ArrayList<String> list) {
+
+            int count = 0;
+
+            for (String w : list) {
+
+                if (search(w))
+                    count++;
+            }
+
+            return count;
+        }
+    }
+
+
     // MAIN
     public static void main(String[] args) {
     }
