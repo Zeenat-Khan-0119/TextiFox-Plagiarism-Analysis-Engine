@@ -189,8 +189,138 @@ public class Main {
         }
     }
 
+    // PHASE 6 - PRIORITY QUEUE
 
-    // MAIN
+    static class Score {
+
+        String name;
+        double value;
+
+        Score(String n, double v) {
+
+            name = n;
+            value = v;
+        }
+    }
+
+    // GUI
+
+    public static void gui() {
+
+        JFrame frame = new JFrame("TEXTI-FOX");
+        frame.setSize(1100, 750);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+
+        frame.getContentPane().setBackground(
+                new Color(240, 245, 255));
+
+        frame.setLayout(new BorderLayout(15, 15));
+
+        // TITLE
+
+        JLabel title =
+                new JLabel(
+                        "TEXTI-FOX PLAGIARISM DETECTOR",
+                        JLabel.CENTER
+                );
+
+        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+
+        title.setForeground(
+                new Color(25, 118, 210)
+        );
+
+        title.setBorder(
+                BorderFactory.createEmptyBorder(
+                        15, 0, 10, 0
+                )
+        );
+
+        frame.add(title, BorderLayout.NORTH);
+
+        // CENTER PANEL
+
+        JPanel centerPanel =
+                new JPanel(
+                        new GridLayout(1, 2, 15, 15)
+                );
+
+        centerPanel.setBackground(
+                new Color(240, 245, 255)
+        );
+
+        centerPanel.setBorder(
+                BorderFactory.createEmptyBorder(
+                        10, 20, 10, 20
+                )
+        );
+
+        JTextPane t1 = new JTextPane();
+        JTextPane t2 = new JTextPane();
+
+        t1.setFont(new Font("Consolas", Font.PLAIN, 15));
+        t2.setFont(new Font("Consolas", Font.PLAIN, 15));
+
+        t1.setBackground(Color.WHITE);
+        t2.setBackground(Color.WHITE);
+
+        t1.setForeground(Color.BLACK);
+        t2.setForeground(Color.BLACK);
+
+        JScrollPane sp1 = new JScrollPane(t1);
+        JScrollPane sp2 = new JScrollPane(t2);
+
+        sp1.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(
+                        new Color(25, 118, 210)
+                ),
+                "Document 1",
+                0,
+                0,
+                new Font("Segoe UI", Font.BOLD, 14),
+                new Color(25, 118, 210)
+        ));
+
+        sp2.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(
+                        new Color(25, 118, 210)
+                ),
+                "Document 2",
+                0,
+                0,
+                new Font("Segoe UI", Font.BOLD, 14),
+                new Color(25, 118, 210)
+        ));
+
+        centerPanel.add(sp1);
+        centerPanel.add(sp2);
+
+        frame.add(centerPanel, BorderLayout.CENTER);
+
+        // SOUTH PANEL
+
+        JPanel southPanel = new JPanel();
+
+        southPanel.setLayout(
+                new BoxLayout(
+                        southPanel,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        southPanel.setBackground(
+                new Color(240, 245, 255)
+        );
+
+        southPanel.setBorder(
+                BorderFactory.createEmptyBorder(
+                        10, 20, 20, 20
+                )
+        );
+    }
+
+        // MAIN
     public static void main(String[] args) {
     }
 }
