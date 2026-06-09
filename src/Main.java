@@ -1,11 +1,14 @@
 import java.nio.file.*;
 import java.util.*;
+import javax.swing.*;
+import java.awt.*;
+
 
 public class Main {
     // GLOBAL STOP WORDS
     static Set<String> stopWords = new HashSet<>(Arrays.asList(
-            "the","is","am","are","was","were","a","an","and","or",
-            "in","on","at","to","for","of","with","as"
+            "the", "is", "am", "are", "was", "were", "a", "an", "and", "or",
+            "in", "on", "at", "to", "for", "of", "with", "as"
     ));
 
     // FILE READER
@@ -40,6 +43,7 @@ public class Main {
         }
         return list;
     }
+
     // PHASE 1 - HASHSET COMPARISON
     public static double phase1(ArrayList<String> a, ArrayList<String> b) {
 
@@ -318,9 +322,265 @@ public class Main {
                         10, 20, 20, 20
                 )
         );
+
+
+        // BUTTON
+        JButton btn =
+                new JButton("CHECK PLAGIARISM");
+
+        btn.setFont(
+                new Font(
+                        "Segoe UI",
+                        Font.BOLD,
+                        16
+                )
+        );
+
+        btn.setBackground(
+                new Color(25, 118, 210)
+        );
+
+        btn.setForeground(Color.WHITE);
+
+        btn.setFocusPainted(false);
+
+        btn.setMaximumSize(
+                new Dimension(260, 45)
+        );
+
+        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // RESULT LABEL
+
+        JLabel result =
+                new JLabel("Plagiarism Score: ");
+
+        result.setFont(
+                new Font(
+                        "Segoe UI",
+                        Font.BOLD,
+                        18
+                )
+        );
+
+        result.setForeground(
+                new Color(25, 118, 210)
+        );
+
+        result.setAlignmentX(
+                Component.CENTER_ALIGNMENT
+        );
+
+
+        // OUTPUT REPORT
+        JTextArea output = new JTextArea();
+
+        output.setEditable(false);
+
+        output.setFont(
+                new Font(
+                        "Consolas",
+                        Font.PLAIN,
+                        14
+                )
+        );
+
+        output.setBackground(Color.WHITE);
+
+        output.setForeground(
+                new Color(40, 40, 40)
+        );
+
+        output.setBorder(
+                BorderFactory.createEmptyBorder(
+                        15, 15, 15, 15
+                )
+        );
+
+        JScrollPane reportScroll =
+                new JScrollPane(output);
+
+        reportScroll.setPreferredSize(
+                new Dimension(900, 220)
+        );
+
+        reportScroll.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(
+                                new Color(25, 118, 210)
+                        ),
+                        "Analysis Report",
+                        0,
+                        0,
+                        new Font(
+                                "Segoe UI",
+                                Font.BOLD,
+                                14
+                        ),
+                        new Color(25, 118, 210)
+                )
+        );
+
+
+        // ADD COMPONENTS
+
+        southPanel.add(btn);
+
+        southPanel.add(
+                Box.createRigidArea(
+                        new Dimension(0, 15)
+                )
+        );
+
+        southPanel.add(result);
+
+        southPanel.add(
+                Box.createRigidArea(
+                        new Dimension(0, 15)
+                )
+        );
+
+        southPanel.add(reportScroll);
+
+        frame.add(southPanel, BorderLayout.SOUTH);
+
+
+        // BUTTON ACTION
+        btn.addActionListener(e -> {
+
+            ArrayList<String> a =
+                    preprocess(t1.getText());
+
+            ArrayList<String> b =
+                    preprocess(t2.getText());
+
+
+            // PHASES
+            double p1 = phase1(a, b);
+
+            double p2 =
+                    phase2(
+                            nGram(a, 3),
+                            nGram(b, 3)
+                    );
+
+            double p3 = phase3(a, b);
+
+            double finalScore =
+                    (p1 + p2 + p3) / 3;
+
+            // TRIE
+            Trie trie = new Trie();
+
+            for (String w : a)
+                trie.insert(w);
+
+            int trieMatch =
+                    trie.matchCount(b);
+
+            // RESULT LABEL
+            result.setText(
+                    "Plagiarism Score: "
+                            + String.format(
+                            "%.2f",
+                            finalScore
+                    ) + "%"
+            );
+
+            // PRIORITY QUEUE
+            PriorityQueue<Score> pq =
+                    new PriorityQueue<>(
+                            (x, y) ->
+                                    Double.compare(
+                                            y.value,
+                                            x.value
+                                    )
+                    );
+
+            pq.add(new Score("Phase 1 - HashSet", p1));
+            pq.add(new Score("Phase 2 - NGram", p2));
+            pq.add(new Score("Phase 3 - LCS", p3));
+
+            // REPORT
+            StringBuilder sb =
+                    new StringBuilder();
+
+            sb.append(
+                    "============== TEXTI-FOX REPORT ==============\n\n"
+            );
+
+            sb.append(
+                    "DOCUMENT STATISTICS\n"
+            );
+
+            sb.append(
+                    "--------------------------------------------------\n"
+            );
+
+            sb.append("Document 1 Words : ")
+                    .append(a.size())
+                    .append("\n");
+
+            sb.append("Document 2 Words : ")
+                    .append(b.size())
+                    .append("\n\n");
+            sb.append(
+                    "TRIE ANALYSIS\n"
+            );
+            sb.append(
+                    "--------------------------------------------------\n"
+            );
+
+            sb.append("Trie Matched Words : ")
+                    .append(trieMatch)
+                    .append("\n\n");
+            sb.append(
+                    "PHASE RANKING (PriorityQueue)\n"
+            );
+            sb.append(
+                    "--------------------------------------------------\n"
+            );
+
+            while (!pq.isEmpty()) {
+                Score s = pq.poll();
+                sb.append(s.name)
+                        .append(" : ")
+                        .append(
+                                String.format(
+                                        "%.2f",
+                                        s.value
+                                )
+                        )
+                        .append("%\n");
+            }
+
+            sb.append("\n");
+
+            sb.append(
+                    "GRAPH REPRESENTATION\n"
+            );
+
+            sb.append(
+                    "--------------------------------------------------\n"
+            );
+
+            sb.append("[Document 1] ===== ")
+                    .append(
+                            String.format(
+                                    "%.2f",
+                                    finalScore
+                            )
+                    )
+                    .append("% ===== [Document 2]\n");
+
+            output.setText(sb.toString());
+        });
+
+        frame.setVisible(true);
     }
 
-        // MAIN
+ // MAIN
     public static void main(String[] args) {
+    gui();
     }
 }
